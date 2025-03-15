@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./test",
     "lib": [
       "ESNext",
       "DOM"
@@ -18,19 +18,9 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    }
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "test/**/*.ts",
+    "test/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts",
-    "examples"
-  ]
 }

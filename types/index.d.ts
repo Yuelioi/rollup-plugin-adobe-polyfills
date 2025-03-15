@@ -2,11 +2,15 @@
 import { Plugin } from "rollup";
 import { FilterPattern } from "@rollup/pluginutils";
 
+type PolyfillCategory = "array" | "function" | "json" | "math" | "number" | "object" | "string";
+
 declare interface InjectAdobePolyfillsOptions {
   /** 包含的文件模式 */
   include?: FilterPattern;
   /** 排除的文件模式 */
   exclude?: FilterPattern;
+
+  disableCategories?: PolyfillCategory[]; // 禁用的 polyfill
 }
 
 /**

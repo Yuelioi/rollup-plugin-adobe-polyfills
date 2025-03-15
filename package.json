@@ -4,15 +4,21 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "you can use es6+ features in adobe scripts by using this plugin, will auto inject polyfills for es3 environments,array, string, json and more",
   "author": "Yuelili",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yuelioi/rollup-plugin-adobe-polyfill"
+  },
+  "license": "ISC",
   "type": "module",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
   "types": "types/index.d.ts",
   "files": [
     "dist",
-    "types"
+    "types",
+    "polyfills"
   ],
   "keywords": [
     "rollup",
@@ -23,8 +29,11 @@
     "modules"
   ],
   "scripts": {
-    "test": "mocha",
-    "build": "rollup -c"
+    "rolldown": "rolldown -c ",
+    "rolldown-test": "rolldown -c rolldown.config.test.js",
+    "rollup-test": "rollup -c rollup.config.test.js",
+    "build": "rollup -c",
+    "pack": "npm pack"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -32,18 +41,20 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "@rollup/pluginutils": "^5.1.4",
+    "@types/node": "^22.13.10",
     "mocha": "^11.1.0",
+    "rolldown": "0.15.1",
     "rollup": "^4.9.1",
+    "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-delete": "^3.0.1",
     "tslib": "^2.8.1"
   },
   "peerDependencies": {
-    "@rollup/pluginutils": "^5.0.2",
+    "rollup": "^4.0.0",
     "typescript": "^5.0.0"
   },
-  "license": "ISC",
   "packageManager": "pnpm@10.4.1",
   "dependencies": {
-    "@types/node": "^22.13.10",
-    "rollup-plugin-delete": "^3.0.1"
+    "rollup-plugin-adobe-polyfill": "file:rollup-plugin-adobe-polyfill-0.0.1.tgz"
   }
 }

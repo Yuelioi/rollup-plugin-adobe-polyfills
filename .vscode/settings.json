@@ -4,7 +4,12 @@
     "**/.svn": true,
     "**/.hg": true,
     "**/.DS_Store": true,
-    "**/Thumbs.db": true
+    "**/Thumbs.db": true,
+    "rolldown.config.js": true,
+    "rolldown.config.test.js": true
   },
-  "hide-files.files": []
+  "hide-files.files": [
+    "rolldown.config.js",
+    "rolldown.config.test.js"
+  ]
 }

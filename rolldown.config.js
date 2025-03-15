@@ -1,7 +1,7 @@
-import { defineConfig } from "rollup";
-import commonjs from "@rollup/plugin-commonjs";
-import nodeResolve from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
+import { defineConfig } from "rolldown";
+// import commonjs from "@rollup/plugin-commonjs";
+// import nodeResolve from "@rollup/plugin-node-resolve";
+// import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 
 import del from "rollup-plugin-delete";
@@ -23,12 +23,12 @@ export default defineConfig({
   ],
   external: ["fs", "typescript", "@rollup/pluginutils"],
   plugins: [
-    del({ targets: "dist" }),
-    nodeResolve(),
-    commonjs({
-      transformMixedEsModules: true,
-    }),
-    typescript(),
+    // del({ targets: "dist" }),
+    // nodeResolve(),
+    // commonjs({
+    //   transformMixedEsModules: true,
+    // }),
+    // typescript(),
     terser(),
   ],
 });

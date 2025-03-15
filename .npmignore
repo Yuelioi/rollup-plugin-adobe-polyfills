@@ -1,0 +1,24 @@
+# 开发文件
+.vscode/
+.idea/
+src/
+test/
+tsconfig*
+rolldown.config*
+rollup.config*
+
+# 构建工具文件
+.gitignore
+.npmignore
+.prettierrc
+.editorconfig
+
+# 日志和缓存
+*.log
+*.tmp
+
+
+# 保留以下目录（与 package.json 的 files 字段匹配）
+!dist/
+!types/
+!polyfills/
