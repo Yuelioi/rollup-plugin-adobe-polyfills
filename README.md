@@ -1,56 +1,55 @@
+# Rollup Plugin for Adobe Script ES3 Polyfill Library
 
-# Rollup 插件 - Adobe 脚本 ES3 Polyfill 库
+![License](https://img.shields.io/badge/license-MIT-blue)
+[![npm version](https://badge.fury.io/js/your-package-name.svg)](https://www.npmjs.com/package/your-package-name)
 
-![许可证](https://img.shields.io/badge/license-MIT-blue)
-[![npm 版本](https://badge.fury.io/js/adobe-script-es3-polyfills.svg)](https://www.npmjs.com/package/adobe-script-es3-polyfills)
+[中文](README-CN.md) | [English](README.md)
 
-为 Adobe 脚本环境量身定制的 ES3 兼容 polyfill 库，按 ECMAScript 版本和功能模块分类的现代 JavaScript API 集合。
+A comprehensive polyfill collection for modern JavaScript APIs, organized by ECMAScript versions and feature categories.
 
-## 🚀 安装
+## 🚀 Installation
 
 ```bash
 npm install adobe-script-es3-polyfills
-# 或
 yarn add adobe-script-es3-polyfills
 ```
 
-## 使用方式
+## 💡 Usage
+
+Import polyfills by category:
 
 ```javascript
 import adobePolyfills from "adobe-script-es3-polyfills";
 
-// Rollup 配置示例
-export default {
-  plugins: [
-    adobePolyfills({ 
-      include: "src/main.ts",
-      disableCategories: ["number", "object", "json"] 
-    }),
-  ],
-};
+...
+
+plugins: [
+  adobePolyfills({ include: "test/test.ts", disableCategories: ["number", "object","json"] }),
+],
+
 ```
 
-## 📚 支持的 Polyfill
+## 📚 Supported Polyfills
 
-### 数组方法
+### Array Methods
 
-| ES 版本 | 支持的方法                                                                                                       |
-| ------- | ---------------------------------------------------------------------------------------------------------------- |
-| ES5     | `forEach`, `map`, `filter`, `reduce`, `reduceRight`, `some`, `every`, `indexOf`, `lastIndexOf` |
-| ES6     | `copyWithin`, `find`, `findIndex`, `fill`, `keys`, `values`, `entries`                             |
-| ES2016  | `includes`                                                                                                     |
-| ES2019  | `flat`, `flatMap`                                                                                            |
-| ES2022  | `at`                                                                                                           |
-| ES2023  | `findLast`, `findLastIndex`                                                                                  |
+| ES Version | Methods                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| ES5        | `forEach`, `map`, `filter`, `reduce`, `reduceRight`, `some`, `every`, `indexOf`, `lastIndexOf` |
+| ES6        | `copyWithin`, `find`, `findIndex`, `fill`, `keys`, `values`, `entries`                             |
+| ES2016     | `includes`                                                                                                     |
+| ES2019     | `flat`, `flatMap`                                                                                            |
+| ES2022     | `at`                                                                                                           |
+| ES2023     | `findLast`, `findLastIndex`                                                                                  |
 
-**静态方法**
+**Static Methods**
 `isArray`, `from`, `of`
 
 ---
 
-### 函数方法
+### Function Methods
 
-| 方法               |
+| Methods            |
 | ------------------ |
 | `bind`, `name` |
 
@@ -58,63 +57,63 @@ export default {
 
 ### JSON
 
-`json3` 实现 (增强的 `JSON.parse`/`JSON.stringify`)
+`json3` implementation (provides `JSON.parse`/`JSON.stringify` enhancements)
 
 ---
 
-### 数学方法
+### Math Methods
 
 `cbrt`, `clz32`, `expm1`, `fround`, `hypot`, `imul`, `log10`, `log1p`, `log2`, `sign`, `trunc`
 
 ---
 
-### 数值方法
+### Number Methods
 
-| 静态方法                 |
+| Static Methods           |
 | ------------------------ |
 | `isInteger`, `isNaN` |
 
 ---
 
-### 对象方法
+### Object Methods
 
-**静态方法**
+**Static Methods**
 `assign`, `create`, `entries`, `getPrototypeOf`, `keys`, `setPrototypeOf`, `values`
 
-**实例方法**
+**Instance Methods**
 `hasOwnProperty`
 
 ---
 
-### 字符串方法
+### String Methods
 
-| ES 版本 | 支持的方法                                                              |
-| ------- | ----------------------------------------------------------------------- |
-| ES5     | `trim`                                                                |
-| ES6     | `codePointAt`, `repeat`, `startsWith`, `endsWith`, `includes` |
-| ES2017  | `padStart`, `padEnd`                                                |
-| ES2019  | `trimStart`, `trimEnd`                                              |
-| ES2020  | `matchAll`                                                            |
-| ES2021  | `replaceAll`                                                          |
-| ES2022  | `at`                                                                  |
+| ES Version | Methods                                                                 |
+| ---------- | ----------------------------------------------------------------------- |
+| ES5        | `trim`                                                                |
+| ES6        | `codePointAt`, `repeat`, `startsWith`, `endsWith`, `includes` |
+| ES2017     | `padStart`, `padEnd`                                                |
+| ES2019     | `trimStart`, `trimEnd`                                              |
+| ES2020     | `matchAll`                                                            |
+| ES2021     | `replaceAll`                                                          |
+| ES2022     | `at`                                                                  |
 
-**静态方法**
+**Static Methods**
 `fromCodePoint`, `raw`
 
-## 🌟 核心特性
+## 🌟 Features
 
-* 模块化架构 - 按需加载所需 polyfill
-* 版本感知分组
-* 开箱即用的 TypeScript 支持
-* 零外部依赖
+* Modular architecture - load only what you need
+* Version-aware grouping
+* TypeScript ready
+* Zero dependencies
 
-## 🤝 参与贡献
+## 🤝 Contributing
 
-1. Fork 本仓库
-2. 在指定版本目录中添加新方法的 polyfill
-3. 更新支持方法列表
-4. 提交包含测试用例的 Pull Request
+1. Fork the repository
+2. Add polyfills for new methods in dedicated version folders
+3. Update supported methods lists
+4. Submit a PR with test cases
 
-## 📜 许可证
+## 📜 License
 
-MIT 许可证 - 详见 [LICENSE](https://license/) 文件
+MIT
