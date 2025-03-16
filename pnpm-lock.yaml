@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      rollup-plugin-adobe-polyfill:
-        specifier: file:rollup-plugin-adobe-polyfill-0.0.1.tgz
-        version: file:rollup-plugin-adobe-polyfill-0.0.1.tgz(rollup@4.35.0)(typescript@5.8.2)
       typescript:
         specifier: ^5.0.0
         version: 5.8.2
@@ -779,13 +776,6 @@ packages:
     peerDependenciesMeta:
       '@babel/runtime':
         optional: true
-
-  rollup-plugin-adobe-polyfill@file:rollup-plugin-adobe-polyfill-0.0.1.tgz:
-    resolution: {integrity: sha512-H9PLISd2JON5iObvzgQctc5Wtnpe02TFRBGCS5/X1H0W3adJqztgg8mrP3x7SNbR2a8Rdp/4rjZr8/8B2e8Vqg==, tarball: file:rollup-plugin-adobe-polyfill-0.0.1.tgz}
-    version: 0.0.1
-    peerDependencies:
-      rollup: ^4.0.0
-      typescript: ^5.0.0
 
   rollup-plugin-copy@3.5.0:
     resolution: {integrity: sha512-wI8D5dvYovRMx/YYKtUNt3Yxaw4ORC9xo6Gt9t22kveWz1enG9QrhVlagzwrxSC455xD1dHMKhIJkbsQ7d48BA==}
@@ -1604,11 +1594,6 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 0.15.1
       '@rolldown/binding-win32-ia32-msvc': 0.15.1
       '@rolldown/binding-win32-x64-msvc': 0.15.1
-
-  rollup-plugin-adobe-polyfill@file:rollup-plugin-adobe-polyfill-0.0.1.tgz(rollup@4.35.0)(typescript@5.8.2):
-    dependencies:
-      rollup: 4.35.0
-      typescript: 5.8.2
 
   rollup-plugin-copy@3.5.0:
     dependencies:
