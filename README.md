@@ -10,16 +10,16 @@ A comprehensive polyfill collection for modern JavaScript APIs, organized by ECM
 ## 🚀 Installation
 
 ```bash
-npm install adobe-script-es3-polyfills
-yarn add adobe-script-es3-polyfills
+npm i rollup-plugin-adobe-polyfills
+yarn add rollup-plugin-adobe-polyfills
 ```
 
 ## 💡 Usage
 
-Import polyfills by category:
+Import polyfills:
 
 ```javascript
-import adobePolyfills from "adobe-script-es3-polyfills";
+import adobePolyfills from "rollup-plugin-adobe-polyfills";
 
 ...
 

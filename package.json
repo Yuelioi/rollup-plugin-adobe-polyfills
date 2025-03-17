@@ -1,6 +1,6 @@
 {
-  "name": "rollup-plugin-adobe-polyfill",
-  "version": "0.0.2",
+  "name": "rollup-plugin-adobe-polyfills",
+  "version": "0.0.1",
   "publishConfig": {
     "access": "public"
   },
@@ -8,7 +8,7 @@
   "author": "Yuelili",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Yuelioi/rollup-plugin-adobe-polyfill"
+    "url": "https://github.com/Yuelioi/rollup-plugin-adobe-polyfills"
   },
   "license": "ISC",
   "type": "module",

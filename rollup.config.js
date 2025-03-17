@@ -3,7 +3,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
-
+import copy from "rollup-plugin-copy";
 import del from "rollup-plugin-delete";
 
 export default defineConfig({
@@ -29,6 +29,9 @@ export default defineConfig({
       transformMixedEsModules: true,
     }),
     typescript(),
-    terser(),
+    copy({
+      targets: [{ src: "polyfills", dest: "dist" }],
+    }),
+    // terser(),
   ],
 });

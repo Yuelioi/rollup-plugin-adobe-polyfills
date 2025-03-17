@@ -4,7 +4,7 @@ import { FilterPattern } from "@rollup/pluginutils";
 
 type PolyfillCategory = "array" | "function" | "json" | "math" | "number" | "object" | "string";
 
-declare interface InjectAdobePolyfillsOptions {
+declare interface AdobePolyfillsOptions {
   /** 包含的文件模式 */
   include?: FilterPattern;
   /** 排除的文件模式 */
@@ -22,6 +22,6 @@ declare interface InjectAdobePolyfillsOptions {
  * - 支持静态方法和实例方法检测
  * - 自动跳过已有实现的方法
  */
-declare function injectAdobePolyfills(options?: InjectAdobePolyfillsOptions): Plugin;
+declare function adobePolyfills(options?: AdobePolyfillsOptions): Plugin;
 
-export default injectAdobePolyfills;
+export default adobePolyfills;

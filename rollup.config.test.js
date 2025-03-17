@@ -7,7 +7,7 @@ import terser from "@rollup/plugin-terser";
 import del from "rollup-plugin-delete";
 
 // import adobePolyfills from "./dist/esm/index.mjs";
-import adobePolyfills from "rollup-plugin-adobe-polyfill";
+import adobePolyfills from "rollup-plugin-adobe-polyfills";
 
 export default defineConfig({
   input: "test/test.ts",

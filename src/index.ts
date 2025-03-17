@@ -6,14 +6,20 @@ import type { Plugin, TransformResult } from "rollup";
 type PolyfillCategory = "array" | "function" | "json" | "math" | "number" | "object" | "string";
 type DetectedMethod = `${PolyfillCategory}.${string}`;
 
-interface InjectAdobePolyfillsOptions {
+interface AdobePolyfillsOptions {
   include?: FilterPattern;
   exclude?: FilterPattern;
   polyfillsPath?: string; // todo 自定义 polyfill 路径
   disableCategories?: PolyfillCategory[]; // 禁用的 polyfill
 }
 
-const POLYFILLS_PATH_CORE = "./polyfills/core";
+// 使用 Node.js 的 __dirname 和 path 模块
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const POLYFILLS_PATH_CORE = path.resolve(__dirname, "../polyfills/core");
 
 import { processor as arrayProcessor } from "./array";
 import { processor as functionProcessor } from "./function";
@@ -45,7 +51,7 @@ function detectPolyfills(
 }
 
 // 主插件函数
-export default function adobePolyfills(options: InjectAdobePolyfillsOptions = {}): Plugin {
+export default function adobePolyfills(options: AdobePolyfillsOptions = {}): Plugin {
   const { include, exclude, disableCategories = [] } = options;
   const filter = createFilter(include, exclude);
 

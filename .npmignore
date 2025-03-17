@@ -16,14 +16,8 @@ rollup.config*
 # 日志和缓存
 *.log
 *.tmp
-
+polyfills/
 
 # 保留以下目录（与 package.json 的 files 字段匹配）
 !dist/
 !types/
-!polyfills/
-
-# 忽略 polyfills 目录下的所有非 JS 文件
-polyfills/**/*.md
-polyfills/**/*.txt
-polyfills/**/test.*

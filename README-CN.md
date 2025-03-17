@@ -10,15 +10,15 @@
 ## 🚀 安装
 
 ```bash
-npm install adobe-script-es3-polyfills
+npm install rollup-plugin-adobe-polyfills
 # 或
-yarn add adobe-script-es3-polyfills
+yarn add rollup-plugin-adobe-polyfills
 ```
 
 ## 使用方式
 
 ```javascript
-import adobePolyfills from "adobe-script-es3-polyfills";
+import adobePolyfills from "rollup-plugin-adobe-polyfills";
 
 // Rollup 配置示例
 export default {
