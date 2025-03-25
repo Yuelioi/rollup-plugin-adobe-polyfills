@@ -24,12 +24,24 @@ import adobePolyfills from "rollup-plugin-adobe-polyfills";
 export default {
   plugins: [
     adobePolyfills({ 
-      include: "src/main.ts",
+      include: 'src/**/*.tsx',
       disableCategories: ["number", "object", "json"] 
     }),
   ],
 };
 ```
+
+## ⚙️ 参数说明
+
+| 参数名                | 类型                                                         | 默认值                  | 描述                                                                                        |
+| --------------------- | ------------------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------- |
+| `include`           | `string`、`RegExp`、`string[]`、`RegExp[]`、`null` | `['src/**/*']`        | 用于匹配要包含在包中的文件的 glob 模式。                                                    |
+| `exclude`           | `string`、`RegExp`、`string[]`、`RegExp[]`、`null` | `["node_modules/**"]` | 用于匹配要从包中排除的文件的 glob 模式。                                                    |
+| `disableCategories` | `string[]`                                                 | `[]`                  | 指定需要从包中排除的类别列表。["array","function","json","math","number","object","string"] |
+
+## 🌈 参考项目
+
+[Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
 
 ## 📚 支持的 Polyfill
 
@@ -59,7 +71,7 @@ export default {
 
 ### JSON
 
-`json3` 实现 (增强的 `JSON.parse`/`JSON.stringify`)
+`json2` 实现 (`JSON.parse`/`JSON.stringify`)
 
 ---
 

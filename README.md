@@ -5,7 +5,7 @@
 
 [中文](README-CN.md) | [English](README.md)
 
-A comprehensive polyfill collection for modern JavaScript APIs, organized by ECMAScript versions and feature categories.
+An ES3-compatible polyfill library specifically designed for Adobe scripting environments, providing modern JavaScript APIs categorized by ECMAScript versions and functional modules.
 
 ## 🚀 Installation
 
@@ -24,10 +24,22 @@ import adobePolyfills from "rollup-plugin-adobe-polyfills";
 ...
 
 plugins: [
-  adobePolyfills({ include: "test/test.ts", disableCategories: ["number", "object","json"] }),
+  adobePolyfills({ include: 'src/**/*.tsx', disableCategories: ["number", "object","json"] }),
 ],
 
 ```
+
+## ⚙️ Parameters
+
+| Parameter             | Type                                                      | Default             | Description                                                                                                     |
+| --------------------- | --------------------------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `include`           | `string`,`RegExp`,`string[]`, `RegExp[]`,`null` | ['src/**/*']        | A glob pattern to match files to include in the bundle.                                                         |
+| `exclude`           | `string`,`RegExp`,`string[]`, `RegExp[]`,`null` | ["node_modules/**"] | A glob pattern to match files to exclude in the bundle.                                                         |
+| `disableCategories` | `string[]`                                              | `[]`              | A list of categories to exclude from the bundle. ["array","function","json","math","number","object","string"] |
+
+## 🌈 Demo Project
+
+[Adobe-Scripting-With-Typescript-Demo](https://github.com/Yuelioi/Adobe-Scripting-With-Typescript-Demo)
 
 ## 📚 Supported Polyfills
 
@@ -57,7 +69,7 @@ plugins: [
 
 ### JSON
 
-`json3` implementation (provides `JSON.parse`/`JSON.stringify` enhancements)
+`json2` implementation (provides `JSON.parse`/`JSON.stringify` )
 
 ---
 

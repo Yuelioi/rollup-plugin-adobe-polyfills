@@ -51,7 +51,7 @@ function detectPolyfills(
 }
 
 // 主插件函数
-export default function adobePolyfills(options: AdobePolyfillsOptions = {}): Plugin {
+export default function adobePolyfills(options: AdobePolyfillsOptions = { include: ["src/**/*"], exclude: ["node_modules/**"] }): Plugin {
   const { include, exclude, disableCategories = [] } = options;
   const filter = createFilter(include, exclude);
 
