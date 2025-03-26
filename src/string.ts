@@ -1,7 +1,5 @@
-import ts from "typescript";
-import { handleInstanceMethod } from "./checker";
+import { Node } from "ts-morph";
 
-// String 方法定义
 const STRING_SUPPORTED_METHODS_ES5 = ["trim"] as const;
 const STRING_SUPPORTED_METHODS_ES6 = ["codePointAt", "repeat", "startsWith", "endsWith", "includes"] as const;
 const STRING_SUPPORTED_METHODS_ES2017 = ["padStart", "padEnd"] as const;
@@ -22,44 +20,46 @@ const STRING_SUPPORTED_METHODS = [
   ...STRING_SUPPORTED_METHODS_ES2022,
 ] as string[];
 
-const isStringType = (checker: ts.TypeChecker, type: ts.Type): type is ts.StringLiteralType => {
-  try {
-    return (type.flags & ts.TypeFlags.StringLike) !== 0 || type.getSymbol()?.getName() === "String" || checker.typeToString(type) === "string";
-  } catch {
-    return false;
-  }
-};
+export function processor(node: Node, detectedMethods: Set<string>): void {
+  if (Node.isCallExpression(node)) {
+    const expression = node.getExpression();
+    if (Node.isPropertyAccessExpression(expression)) {
+      const caller = expression.getExpression();
+      const methodName = expression.getName();
 
-export function processor(node: ts.Node, detectedMethods: Set<string>, checker: ts.TypeChecker): void {
-  if (ts.isCallExpression(node)) {
-    const expression = node.expression;
+      if (!STRING_SUPPORTED_METHODS.includes(methodName) && !(STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(methodName)) {
+        return;
+      }
 
-    if (ts.isPropertyAccessExpression(expression)) {
-      const methodName = expression.name.text;
-      const objExpression = expression.expression;
+      // string literal type
+      if (Node.isStringLiteral(caller)) {
+        detectedMethods.add(`string.${methodName}`);
+        return;
+      }
 
-      try {
-        // 处理静态方法
-        if (ts.isIdentifier(objExpression)) {
-          const staticType = objExpression.text;
+      if (Node.isIdentifier(caller)) {
+        // Static Method
+        if (caller.getText() === "String") {
+          detectedMethods.add(`string.${methodName}`);
 
-          if (staticType === "String" && (STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(methodName)) {
-            detectedMethods.add(`string.${methodName}`);
-            return;
-          }
+          return;
         }
 
-        handleInstanceMethod(checker, objExpression, (checker, t) => {
-          if (isStringType(checker, t)) {
-            if (STRING_SUPPORTED_METHODS.includes(methodName)) {
+        // Instance Method
+        const symbol = caller.getSymbol();
+        if (!symbol) return;
+
+        const declarations = symbol.getDeclarations();
+        for (const declaration of declarations) {
+          if (Node.isVariableDeclaration(declaration)) {
+            const initializer = declaration.getInitializer();
+            if (initializer && Node.isStringLiteral(initializer)) {
               detectedMethods.add(`string.${methodName}`);
-              return true;
+
+              break;
             }
           }
-          return false;
-        });
-      } catch (error: unknown) {
-        console.warn(`[Polyfill Injector] Failed to detect method: ${error instanceof Error ? error.message : String(error)}`);
+        }
       }
     }
   }

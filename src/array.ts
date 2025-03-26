@@ -1,5 +1,4 @@
-import ts from "typescript";
-import { handleInstanceMethod } from "./checker";
+import { Node } from "ts-morph";
 
 // Array 方法定义
 const ARRAY_SUPPORTED_METHODS_ES5 = ["forEach", "map", "filter", "reduce", "reduceRight", "some", "every", "indexOf", "lastIndexOf"] as const;
@@ -21,42 +20,44 @@ const ARRAY_SUPPORTED_METHODS = [
   ...ARRAY_SUPPORTED_METHODS_ES2023,
 ] as string[];
 
-const isArrayType = (checker: ts.TypeChecker, type: ts.Type): type is ts.TypeReference => {
-  try {
-    return checker.isArrayType(type) || checker.isTupleType(type) || type.getSymbol()?.getName() === "Array";
-  } catch {
-    return false;
-  }
-};
+export function processor(node: Node, detectedMethods: Set<string>): void {
+  if (Node.isCallExpression(node)) {
+    const expression = node.getExpression();
+    if (Node.isPropertyAccessExpression(expression)) {
+      const caller = expression.getExpression();
+      const methodName = expression.getName();
 
-export function processor(node: ts.Node, detectedMethods: Set<string>, checker: ts.TypeChecker): void {
-  if (ts.isCallExpression(node)) {
-    const expression = node.expression;
+      if (!ARRAY_SUPPORTED_METHODS.includes(methodName) && !(ARRAY_SUPPORTED_STATIC_METHODS as readonly string[]).includes(methodName)) {
+        return;
+      }
 
-    if (ts.isPropertyAccessExpression(expression)) {
-      const methodName = expression.name.text;
-      const objExpression = expression.expression;
+      // array literal type
+      if (Node.isArrayLiteralExpression(caller)) {
+        detectedMethods.add(`array.${methodName}`);
+        return;
+      }
 
-      try {
-        // 处理静态方法
-        if (ts.isIdentifier(objExpression)) {
-          if (objExpression.text === "Array" && (ARRAY_SUPPORTED_STATIC_METHODS as readonly string[]).includes(methodName)) {
-            detectedMethods.add(`array.${methodName}`);
-            return;
-          }
+      if (Node.isIdentifier(caller)) {
+        // Static Method
+        if (caller.getText() === "Array") {
+          detectedMethods.add(`array.${methodName}`);
+          return;
         }
 
-        handleInstanceMethod(checker, objExpression, (checker, t) => {
-          if (isArrayType(checker, t)) {
-            if (ARRAY_SUPPORTED_METHODS.includes(methodName)) {
+        // Instance Method
+        const symbol = caller.getSymbol();
+        if (!symbol) return;
+
+        const declarations = symbol.getDeclarations();
+        for (const declaration of declarations) {
+          if (Node.isVariableDeclaration(declaration)) {
+            const initializer = declaration.getInitializer();
+            if (initializer && Node.isArrayLiteralExpression(initializer)) {
               detectedMethods.add(`array.${methodName}`);
-              return true;
+              break;
             }
           }
-          return false;
-        });
-      } catch (error: unknown) {
-        console.warn(`[Polyfill Injector] Failed to detect method: ${error instanceof Error ? error.message : String(error)}`);
+        }
       }
     }
   }

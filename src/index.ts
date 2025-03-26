@@ -1,7 +1,7 @@
 import { createFilter, type FilterPattern } from "@rollup/pluginutils";
 import { readFileSync } from "fs";
-import ts from "typescript";
 import type { Plugin, TransformResult } from "rollup";
+import { Node, Project } from "ts-morph";
 
 type PolyfillCategory = "array" | "function" | "json" | "math" | "number" | "object" | "string";
 type DetectedMethod = `${PolyfillCategory}.${string}`;
@@ -13,7 +13,6 @@ interface AdobePolyfillsOptions {
   disableCategories?: PolyfillCategory[]; // 禁用的 polyfill
 }
 
-// 使用 Node.js 的 __dirname 和 path 模块
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -40,13 +39,12 @@ const processors = {
 };
 
 function detectPolyfills(
-  processors: { [key in PolyfillCategory]: (node: ts.Node, detectedMethods: Set<string>, checker: ts.TypeChecker) => void },
-  node: ts.Node,
-  detectedMethods: Set<string>,
-  checker: ts.TypeChecker
+  processors: { [key in PolyfillCategory]: (node: Node, detectedMethods: Set<string>) => void },
+  node: Node,
+  detectedMethods: Set<string>
 ): void {
   for (const processor of Object.values(processors)) {
-    processor(node, detectedMethods, checker);
+    processor(node, detectedMethods);
   }
 }
 
@@ -66,17 +64,14 @@ export default function adobePolyfills(options: AdobePolyfillsOptions = { includ
       if (!filter(id)) return null;
 
       const detectedMethods = new Set<DetectedMethod>();
-      const sourceFile = ts.createSourceFile(id, code, ts.ScriptTarget.Latest, true);
+      const project = new Project({
+        useInMemoryFileSystem: true,
+      });
+      const sourceFile = project.createSourceFile(id, code);
 
-      const program = ts.createProgram([id], {});
-      const checker = program.getTypeChecker();
-
-      const visit = (node: ts.Node): void => {
-        detectPolyfills(filteredProcessors, node, detectedMethods, checker);
-        ts.forEachChild(node, visit);
-      };
-
-      visit(sourceFile);
+      sourceFile.forEachDescendant((node) => {
+        detectPolyfills(filteredProcessors, node, detectedMethods);
+      });
 
       if (detectedMethods.size === 0) return null;
 

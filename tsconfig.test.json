@@ -17,6 +17,8 @@
     "emitDeclarationOnly": false,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "inlineSources": true,
     "baseUrl": ".",
   },
   "include": [

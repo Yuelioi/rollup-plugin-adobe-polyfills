@@ -1,17 +1,12 @@
-import ts from "typescript";
+import { Node } from "ts-morph";
 
-export function processor(node: ts.Node, detectedMethods: Set<string>, checker: ts.TypeChecker): void {
-  if (ts.isCallExpression(node)) {
-    const expression = node.expression;
-
-    if (ts.isPropertyAccessExpression(expression)) {
-      const objExpression = expression.expression;
-
-      if (ts.isIdentifier(objExpression)) {
-        const symbol = checker.getSymbolAtLocation(objExpression);
-        if (symbol && symbol.getName() === "JSON") {
-          detectedMethods.add("json.json2");
-        }
+export function processor(node: Node, detectedMethods: Set<string>): void {
+  if (Node.isCallExpression(node)) {
+    const expression = node.getExpression();
+    if (Node.isPropertyAccessExpression(expression)) {
+      const caller = expression.getExpression();
+      if (Node.isIdentifier(caller) && caller.getText() === "JSON") {
+        detectedMethods.add("json.json2");
       }
     }
   }

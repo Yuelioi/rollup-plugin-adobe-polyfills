@@ -21,7 +21,7 @@ export default defineConfig({
       exports: "auto",
     },
   ],
-  external: ["fs", "typescript", "@rollup/pluginutils"],
+  external: ["rollup", "typescript", "@rollup/pluginutils", "ts-morph"],
   plugins: [
     del({ targets: "dist" }),
     nodeResolve(),
