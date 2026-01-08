@@ -1,5 +1,5 @@
 if (!Number.isNaN) {
   Number.isNaN = function (value) {
-    return value !== value;
+    return typeof value === "number" && isNaN(value);
   };
 }

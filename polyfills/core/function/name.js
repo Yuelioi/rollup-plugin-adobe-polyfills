@@ -1,7 +1,10 @@
-if (!Function.prototype.name) {
+if (!("name" in Function.prototype)) {
   Object.defineProperty(Function.prototype, "name", {
     get: function () {
-      return this.toString().match(/^\s*function\s*([^\(\s]*)/)[1];
+      var name = this.toString().match(/^\s*function\s+([^\s(]+)/);
+      return name ? name[1] : "";
     },
+    enumerable: false,
+    configurable: true,
   });
 }

@@ -1,14 +1,23 @@
 if (!Array.prototype.flatMap) {
-  Array.prototype.flatMap = function (callback) {
-    var mapped = [];
+  Array.prototype.flatMap = function (callback, thisArg) {
+    if (this === null || this === undefined) {
+      throw new TypeError(
+        "Array.prototype.flatMap called on null or undefined"
+      );
+    }
+    var result = [];
     for (var i = 0; i < this.length; i++) {
-      var item = callback(this[i], i, this);
-      if (Array.isArray(item)) {
-        mapped = mapped.concat(item);
-      } else {
-        mapped.push(item);
+      if (i in this) {
+        var mapped = callback.call(thisArg, this[i], i, this);
+        if (Array.isArray(mapped)) {
+          for (var j = 0; j < mapped.length; j++) {
+            result.push(mapped[j]);
+          }
+        } else {
+          result.push(mapped);
+        }
       }
     }
-    return mapped;
+    return result;
   };
 }

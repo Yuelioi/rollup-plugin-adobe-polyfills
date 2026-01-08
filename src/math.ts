@@ -1,10 +1,28 @@
 import { Node } from "ts-morph";
 
-const MATH_SUPPORTED_METHODS = ["cbrt", "clz32", "expm1", "fround", "hypot", "imul", "log10", "log1p", "log2", "sign", "trunc"] as const;
+const MATH_SUPPORTED_METHODS = [
+  "cbrt",
+  "clz32",
+  "expm1",
+  "fround",
+  "hypot",
+  "imul",
+  "log10",
+  "log1p",
+  "log2",
+  "sign",
+  "trunc",
+] as const;
 
-export function processor(node: Node, detectedMethods: Set<string>): void {
+type DetectedMethod = `math.${(typeof MATH_SUPPORTED_METHODS)[number]}`;
+
+export function processor(
+  node: Node,
+  detectedMethods: Set<DetectedMethod>
+): void {
   if (Node.isCallExpression(node)) {
     const expression = node.getExpression();
+
     if (Node.isPropertyAccessExpression(expression)) {
       const caller = expression.getExpression();
       const methodName = expression.getName();
@@ -14,7 +32,7 @@ export function processor(node: Node, detectedMethods: Set<string>): void {
       }
 
       if (Node.isIdentifier(caller) && caller.getText() === "Math") {
-        detectedMethods.add(`math.${methodName}`);
+        detectedMethods.add(`math.${methodName}` as DetectedMethod);
       }
     }
   }

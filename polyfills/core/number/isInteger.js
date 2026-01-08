@@ -1,5 +1,11 @@
 if (!Number.isInteger) {
   Number.isInteger = function (value) {
-    return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
+    if (typeof value !== "number") {
+      return false;
+    }
+    if (isNaN(value) || !isFinite(value)) {
+      return false;
+    }
+    return value === Math.floor(value);
   };
 }

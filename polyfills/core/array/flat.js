@@ -1,14 +1,17 @@
-if (!Array.prototype.flat) {
-  Array.prototype.flat = function (depth) {
-    depth = depth === undefined ? 1 : Math.floor(depth);
-    var result = [];
-    for (var i = 0; i < this.length; i++) {
-      if (Array.isArray(this[i]) && depth > 0) {
-        result = result.concat(this[i].flat(depth - 1));
+Array.prototype.flat = function (depth) {
+  depth = depth === undefined ? 1 : depth >>> 0;
+  var result = [];
+
+  var flatten = function (arr, d) {
+    for (var i = 0; i < arr.length; i++) {
+      if (d > 0 && Array.isArray(arr[i])) {
+        flatten(arr[i], d - 1);
       } else {
-        result.push(this[i]);
+        result.push(arr[i]);
       }
     }
-    return result;
   };
-}
+
+  flatten(this, depth);
+  return result;
+};

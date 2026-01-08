@@ -23,7 +23,7 @@ describe("string static method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("fromCodePoint");
+    expect(needsPolyfill).toContain("string.fromCodePoint");
   });
 });
 
@@ -35,7 +35,7 @@ describe("string literal method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("at");
+    expect(needsPolyfill).toContain("string.at");
   });
 
   it("should detect padEnd() method on string literal", async () => {
@@ -47,7 +47,7 @@ describe("string literal method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("padEnd");
+    expect(needsPolyfill).toContain("string.padEnd");
   });
 
   it("should detect multiple methods on string literal", async () => {
@@ -60,8 +60,8 @@ describe("string literal method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("at");
-    expect(needsPolyfill).toContain("padEnd");
+    expect(needsPolyfill).toContain("string.at");
+    expect(needsPolyfill).toContain("string.padEnd");
   });
 });
 
@@ -76,7 +76,7 @@ describe("variable string method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("at");
+    expect(needsPolyfill).toContain("string.at");
   });
 
   it("should detect padStart() method on string variable", async () => {
@@ -89,7 +89,7 @@ describe("variable string method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("padStart");
+    expect(needsPolyfill).toContain("string.padStart");
   });
 
   it("should detect multiple methods on string variables", async () => {
@@ -104,8 +104,8 @@ describe("variable string method calls", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("at");
-    expect(needsPolyfill).toContain("padEnd");
+    expect(needsPolyfill).toContain("string.at");
+    expect(needsPolyfill).toContain("string.padEnd");
   });
 });
 
@@ -122,9 +122,27 @@ describe("mixed usage", () => {
       processor(node, needsPolyfill);
     });
 
-    expect(needsPolyfill).toContain("at");
-    expect(needsPolyfill).toContain("padEnd");
-    expect(needsPolyfill).toContain("fromCodePoint");
+    expect(needsPolyfill).toContain("string.at");
+    expect(needsPolyfill).toContain("string.padEnd");
+    expect(needsPolyfill).toContain("string.fromCodePoint");
+  });
+});
+
+describe("function result", () => {
+  it("should detect both literal and variable and static method calls", async () => {
+    const code = `
+      "function add(a, b){
+        return a + b;
+      };
+      const str = add("world", "!");
+      str.padEnd(10);
+    `;
+    const { file, needsPolyfill } = createEnv(code);
+    file.forEachDescendant((node) => {
+      processor(node, needsPolyfill);
+    });
+
+    expect(needsPolyfill).toContain("string.padEnd");
   });
 });
 

@@ -1,28 +1,30 @@
-if (!Array.prototype.reduceRight) {
-  Array.prototype.reduceRight = function (callback, initialValue) {
-    if (this == null) {
-      throw new TypeError('Array.prototype.reduceRight called on null or undefined');
-    }
-    if (typeof callback !== 'function') {
-      throw new TypeError(callback + ' is not a function');
-    }
-    var array = Object(this);
-    var length = array.length >>> 0;
-    var accumulator = initialValue;
-    var i = length - 1;
+Array.prototype.reduceRight = function (callback, initialValue) {
+  if (this === null || this === undefined) {
+    throw new TypeError(
+      "Array.prototype.reduceRight called on null or undefined"
+    );
+  }
+  var hasInitial = arguments.length > 1;
+  var accumulator = hasInitial ? initialValue : undefined;
+  var startIndex = this.length - 1;
 
-    if (arguments.length < 2) {
-      if (length === 0) {
-        throw new TypeError('Reduce of empty array with no initial value');
-      }
-      accumulator = array[i--];
-    }
-
-    for (; i >= 0; i--) {
-      if (i in array) {
-        accumulator = callback(accumulator, array[i], i, array);
+  if (!hasInitial) {
+    for (var i = this.length - 1; i >= 0; i--) {
+      if (i in this) {
+        accumulator = this[i];
+        startIndex = i - 1;
+        break;
       }
     }
-    return accumulator;
-  };
-}
+    if (!hasInitial && startIndex === this.length - 1) {
+      throw new TypeError("Reduce of empty array with no initial value");
+    }
+  }
+
+  for (var i = startIndex; i >= 0; i--) {
+    if (i in this) {
+      accumulator = callback.call(undefined, accumulator, this[i], i, this);
+    }
+  }
+  return accumulator;
+};

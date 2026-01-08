@@ -1,13 +1,20 @@
 if (!Object.assign) {
   Object.assign = function (target) {
+    if (target === null || target === undefined) {
+      throw new TypeError("Cannot convert undefined or null to object");
+    }
+    var to = Object(target);
     for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (source.hasOwnProperty(key)) {
-          target[key] = source[key];
+      var nextSource = arguments[i];
+      if (nextSource === null || nextSource === undefined) {
+        continue;
+      }
+      for (var key in nextSource) {
+        if (Object.prototype.hasOwnProperty.call(nextSource, key)) {
+          to[key] = nextSource[key];
         }
       }
     }
-    return target;
+    return to;
   };
 }

@@ -1,7 +1,13 @@
 import { Node } from "ts-morph";
 
 const STRING_SUPPORTED_METHODS_ES5 = ["trim"] as const;
-const STRING_SUPPORTED_METHODS_ES6 = ["codePointAt", "repeat", "startsWith", "endsWith", "includes"] as const;
+const STRING_SUPPORTED_METHODS_ES6 = [
+  "codePointAt",
+  "repeat",
+  "startsWith",
+  "endsWith",
+  "includes",
+] as const;
 const STRING_SUPPORTED_METHODS_ES2017 = ["padStart", "padEnd"] as const;
 const STRING_SUPPORTED_METHODS_ES2019 = ["trimStart", "trimEnd"] as const;
 const STRING_SUPPORTED_METHODS_ES2020 = ["matchAll"] as const;
@@ -9,7 +15,6 @@ const STRING_SUPPORTED_METHODS_ES2021 = ["replaceAll"] as const;
 const STRING_SUPPORTED_METHODS_ES2022 = ["at"] as const;
 const STRING_SUPPORTED_STATIC_METHODS = ["fromCodePoint", "raw"] as const;
 
-// 方法组合
 const STRING_SUPPORTED_METHODS = [
   ...STRING_SUPPORTED_METHODS_ES5,
   ...STRING_SUPPORTED_METHODS_ES6,
@@ -18,48 +23,99 @@ const STRING_SUPPORTED_METHODS = [
   ...STRING_SUPPORTED_METHODS_ES2020,
   ...STRING_SUPPORTED_METHODS_ES2021,
   ...STRING_SUPPORTED_METHODS_ES2022,
-] as string[];
+] as const;
 
-export function processor(node: Node, detectedMethods: Set<string>): void {
+type DetectedMethod = `string.${
+  | (typeof STRING_SUPPORTED_METHODS)[number]
+  | (typeof STRING_SUPPORTED_STATIC_METHODS)[number]}`;
+
+function isStringType(declaration: Node): boolean {
+  if (Node.isVariableDeclaration(declaration)) {
+    const initializer = declaration.getInitializer();
+    if (!initializer) return false;
+
+    if (Node.isStringLiteral(initializer)) {
+      return true;
+    }
+
+    if (Node.isCallExpression(initializer)) {
+      const expression = initializer.getExpression();
+      if (Node.isIdentifier(expression) && expression.getText() === "String") {
+        return true;
+      }
+    }
+
+    if (Node.isTemplateExpression(initializer)) {
+      return true;
+    }
+
+    const type = declaration.getType();
+    const typeText = type.getText();
+    return typeText === "string";
+  }
+
+  if (Node.isParameterDeclaration(declaration)) {
+    const type = declaration.getType();
+    const typeText = type.getText();
+    return typeText === "string";
+  }
+
+  return false;
+}
+
+function detectStringType(caller: Node): boolean {
+  if (Node.isStringLiteral(caller)) {
+    return true;
+  }
+
+  if (Node.isTemplateExpression(caller)) {
+    return true;
+  }
+
+  if (Node.isIdentifier(caller)) {
+    const symbol = caller.getSymbol();
+    if (!symbol) return false;
+
+    const declarations = symbol.getDeclarations();
+    return declarations.some((decl) => isStringType(decl));
+  }
+
+  return false;
+}
+
+export function processor(
+  node: Node,
+  detectedMethods: Set<DetectedMethod>
+): void {
   if (Node.isCallExpression(node)) {
     const expression = node.getExpression();
+
     if (Node.isPropertyAccessExpression(expression)) {
       const caller = expression.getExpression();
       const methodName = expression.getName();
 
-      if (!STRING_SUPPORTED_METHODS.includes(methodName) && !(STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(methodName)) {
+      if (
+        !(STRING_SUPPORTED_METHODS as readonly string[]).includes(methodName) &&
+        !(STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(
+          methodName
+        )
+      ) {
         return;
       }
 
-      // string literal type
-      if (Node.isStringLiteral(caller)) {
-        detectedMethods.add(`string.${methodName}`);
-        return;
-      }
-
-      if (Node.isIdentifier(caller)) {
-        // Static Method
-        if (caller.getText() === "String") {
-          detectedMethods.add(`string.${methodName}`);
-
+      if (Node.isIdentifier(caller) && caller.getText() === "String") {
+        if (
+          (STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(
+            methodName
+          )
+        ) {
+          detectedMethods.add(`string.${methodName}` as DetectedMethod);
           return;
         }
+      }
 
-        // Instance Method
-        const symbol = caller.getSymbol();
-        if (!symbol) return;
-
-        const declarations = symbol.getDeclarations();
-        for (const declaration of declarations) {
-          if (Node.isVariableDeclaration(declaration)) {
-            const initializer = declaration.getInitializer();
-            if (initializer && Node.isStringLiteral(initializer)) {
-              detectedMethods.add(`string.${methodName}`);
-
-              break;
-            }
-          }
-        }
+      if (detectStringType(caller)) {
+        detectedMethods.add(`string.${methodName}` as DetectedMethod);
       }
     }
   }

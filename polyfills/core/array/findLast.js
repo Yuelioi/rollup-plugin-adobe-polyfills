@@ -1,7 +1,9 @@
 if (!Array.prototype.findLast) {
   Array.prototype.findLast = function (predicate, thisArg) {
-    if (this == null) {
-      throw new TypeError("Array.prototype.findLast called on null or undefined");
+    if (this === null || this === undefined) {
+      throw new TypeError(
+        "Array.prototype.findLast called on null or undefined"
+      );
     }
     if (typeof predicate !== "function") {
       throw new TypeError(predicate + " is not a function");
