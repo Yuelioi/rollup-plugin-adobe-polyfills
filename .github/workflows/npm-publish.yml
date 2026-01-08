@@ -1,10 +1,6 @@
 name: Publish to NPM
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_dispatch:
 
 jobs:
@@ -12,67 +8,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: pnpm/action-setup@v2
         with:
-          version: '10.4.1'
+          version: 10.4.1
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: 20
+          cache: pnpm
 
       - run: pnpm install
+
       - run: pnpm run build
+
       - run: pnpm run test
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: build
           path: |
-            dist/
-            types/
-            polyfills/
+            dist
+            types
+            polyfills
 
-  publish-npm:
+  publish:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v2
         with:
-          version: '10.4.1'
+          version: 10.4.1
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org/'
-          cache: 'pnpm'
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
 
       - run: pnpm install
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: build
 
-      - name: Publish to NPM
-        run: pnpm publish --access=public
+      - run: pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release Assets
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            dist/**/*
-            types/**/*
-          token: ${{ secrets.GITHUB_TOKEN }}

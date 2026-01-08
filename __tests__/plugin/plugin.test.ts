@@ -9,7 +9,10 @@ describe("adobe-script-polyfills plugin", () => {
   });
 
   const transform = async (code: string) => {
-    const transformFn = typeof plugin.transform === "function" ? plugin.transform : plugin.transform?.handler;
+    const transformFn =
+      typeof plugin.transform === "function"
+        ? plugin.transform
+        : plugin.transform?.handler;
 
     if (!transformFn) {
       throw new Error("Transform function not found");
@@ -17,11 +20,17 @@ describe("adobe-script-polyfills plugin", () => {
 
     const mockContext: Partial<TransformPluginContext> = {
       error: (error: string | RollupError) => {
-        throw new Error(typeof error === "string" ? error : error.message || "Unknown error");
+        throw new Error(
+          typeof error === "string" ? error : error.message || "Unknown error"
+        );
       },
     };
 
-    const result = await transformFn.call(mockContext as TransformPluginContext, code, "test.ts");
+    const result = await transformFn.call(
+      mockContext as TransformPluginContext,
+      code,
+      "test.ts"
+    );
 
     if (typeof result === "string") {
       return result;
@@ -37,8 +46,8 @@ describe("adobe-script-polyfills plugin", () => {
       `;
       const result = await transform(code);
 
-      expect(result).toContain("String.prototype.at");
-      expect(result).toContain("String.prototype.padEnd");
+      expect(result).toContain("string.at");
+      expect(result).toContain("string.padEnd");
     });
   });
 
@@ -52,8 +61,8 @@ describe("adobe-script-polyfills plugin", () => {
       `;
       const result = await transform(code);
 
-      expect(result).toContain("String.prototype.at");
-      expect(result).toContain("String.prototype.padEnd");
+      expect(result).toContain("string.at");
+      expect(result).toContain("string.padEnd");
     });
   });
 
@@ -65,8 +74,8 @@ describe("adobe-script-polyfills plugin", () => {
         str.padEnd(10);
       `;
       const result = await transform(code);
-      expect(result).toContain("String.prototype.at");
-      expect(result).toContain("String.prototype.padEnd");
+      expect(result).toContain("string.at");
+      expect(result).toContain("string.padEnd");
     });
   });
 
@@ -91,21 +100,19 @@ describe("adobe-script-polyfills plugin", () => {
         str.length;
       `;
       const result = await transform(code);
-      console.log(result);
 
-      expect(result).not.toContain("String.prototype.indexOf");
+      expect(result).toBeNull();
     });
 
-    it("should not change", async () => {
+    it("should return null when no polyfills detected", async () => {
       const code = `
         "hello".indexOf("o");
         const str = "world";
         str.length;
       `;
       const result = await transform(code);
-      console.log(result); // undefined
 
-      expect(result).not.toContain("String.prototype.indexOf");
+      expect(result).toBeNull();
     });
   });
 
@@ -118,27 +125,28 @@ describe("adobe-script-polyfills plugin", () => {
       `;
       const result = await transform(code);
 
-      expect(result).toContain("Array.prototype.at");
-      expect(result).toContain("Array.prototype.includes");
+      expect(result).toContain("array.at");
+      expect(result).toContain("array.includes");
     });
   });
 
   describe("function method calls", () => {
     it("should detect function methods", async () => {
       const code = `
-        function test() {}; test.bind(this);
+        function test() {}
+        test.bind(this);
         const fn = () => {};
         fn.name;
       `;
       const result = await transform(code);
 
-      expect(result).toContain("Function.prototype.bind");
-      expect(result).toContain("Function.prototype.name");
+      expect(result).toContain("function.bind");
+      expect(result).toContain("function.name");
     });
   });
 
   describe("object method calls", () => {
-    it("should detect object methods", async () => {
+    it("should detect object static methods", async () => {
       const code = `
         Object.assign({}, { a: 1 });
         const obj = {};
@@ -146,8 +154,34 @@ describe("adobe-script-polyfills plugin", () => {
       `;
       const result = await transform(code);
 
-      expect(result).toContain("Object.assign = function");
-      expect(result).toContain("Object.getPrototypeOf = function");
+      expect(result).toContain("object.assign");
+      expect(result).toContain("object.getPrototypeOf");
+    });
+  });
+
+  describe("math method calls", () => {
+    it("should detect math methods", async () => {
+      const code = `
+        Math.sign(-5);
+        Math.trunc(3.14);
+      `;
+      const result = await transform(code);
+
+      expect(result).toContain("math.sign");
+      expect(result).toContain("math.trunc");
+    });
+  });
+
+  describe("number method calls", () => {
+    it("should detect number methods", async () => {
+      const code = `
+        Number.isInteger(5);
+        Number.isNaN(NaN);
+      `;
+      const result = await transform(code);
+
+      expect(result).toContain("number.isInteger");
+      expect(result).toContain("number.isNaN");
     });
   });
 });
