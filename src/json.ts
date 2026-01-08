@@ -1,6 +1,6 @@
 import { Node } from "ts-morph";
 
-const JSON_SUPPORTED_METHODS = ["json2"] as const;
+const JSON_SUPPORTED_METHODS = ["stringify", "parse"] as const;
 
 type DetectedMethod = `json.${(typeof JSON_SUPPORTED_METHODS)[number]}`;
 
