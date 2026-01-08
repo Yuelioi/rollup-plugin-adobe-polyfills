@@ -1,8 +1,6 @@
 import { Node } from "ts-morph";
 
-const JSON_SUPPORTED_METHODS = ["stringify", "parse"] as const;
-
-type DetectedMethod = `json.${(typeof JSON_SUPPORTED_METHODS)[number]}`;
+type DetectedMethod = `json.json2`;
 
 export function processor(
   node: Node,
@@ -15,12 +13,12 @@ export function processor(
       const caller = expression.getExpression();
       const methodName = expression.getName();
 
-      if (!(JSON_SUPPORTED_METHODS as readonly string[]).includes(methodName)) {
-        return;
-      }
-
-      if (Node.isIdentifier(caller) && caller.getText() === "JSON") {
-        detectedMethods.add(`json.${methodName}` as DetectedMethod);
+      if (
+        Node.isIdentifier(caller) &&
+        caller.getText() === "JSON" &&
+        (methodName === "stringify" || methodName === "parse")
+      ) {
+        detectedMethods.add("json.json2" as DetectedMethod);
       }
     }
   }
