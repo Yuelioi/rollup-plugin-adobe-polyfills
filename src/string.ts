@@ -29,6 +29,11 @@ type DetectedMethod = `string.${
   | (typeof STRING_SUPPORTED_METHODS)[number]
   | (typeof STRING_SUPPORTED_STATIC_METHODS)[number]}`;
 
+const METHOD_DEPENDENCIES: Record<string, string[]> = {
+  padStart: ["repeat"],
+  padEnd: ["repeat"],
+};
+
 function isStringType(declaration: Node): boolean {
   if (Node.isVariableDeclaration(declaration)) {
     const initializer = declaration.getInitializer();
@@ -83,6 +88,22 @@ function detectStringType(caller: Node): boolean {
   return false;
 }
 
+function addDependencies(
+  method: string,
+  detectedMethods: Set<DetectedMethod>
+): void {
+  const deps = METHOD_DEPENDENCIES[method];
+  if (!deps) return;
+
+  for (const dep of deps) {
+    const depMethod = `string.${dep}` as DetectedMethod;
+    if (!detectedMethods.has(depMethod)) {
+      detectedMethods.add(depMethod);
+      addDependencies(dep, detectedMethods);
+    }
+  }
+}
+
 export function processor(
   node: Node,
   detectedMethods: Set<DetectedMethod>
@@ -110,12 +131,14 @@ export function processor(
           )
         ) {
           detectedMethods.add(`string.${methodName}` as DetectedMethod);
+          addDependencies(methodName, detectedMethods);
           return;
         }
       }
 
       if (detectStringType(caller)) {
         detectedMethods.add(`string.${methodName}` as DetectedMethod);
+        addDependencies(methodName, detectedMethods);
       }
     }
   }
