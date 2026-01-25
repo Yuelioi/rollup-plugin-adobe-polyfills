@@ -85,12 +85,26 @@ function detectStringType(caller: Node): boolean {
     return declarations.some((decl) => isStringType(decl));
   }
 
-  return false;
+  // 新增：处理属性访问表达式
+  if (Node.isPropertyAccessExpression(caller)) {
+    const type = caller.getType();
+    const typeText = type.getText();
+    return typeText === "string";
+  }
+
+  // 新增：处理其他可能返回字符串的表达式
+  try {
+    const type = caller.getType();
+    const typeText = type.getText();
+    return typeText === "string";
+  } catch {
+    return false;
+  }
 }
 
 function addDependencies(
   method: string,
-  detectedMethods: Set<DetectedMethod>
+  detectedMethods: Set<DetectedMethod>,
 ): void {
   const deps = METHOD_DEPENDENCIES[method];
   if (!deps) return;
@@ -106,7 +120,7 @@ function addDependencies(
 
 export function processor(
   node: Node,
-  detectedMethods: Set<DetectedMethod>
+  detectedMethods: Set<DetectedMethod>,
 ): void {
   if (Node.isCallExpression(node)) {
     const expression = node.getExpression();
@@ -118,7 +132,7 @@ export function processor(
       if (
         !(STRING_SUPPORTED_METHODS as readonly string[]).includes(methodName) &&
         !(STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(
-          methodName
+          methodName,
         )
       ) {
         return;
@@ -127,7 +141,7 @@ export function processor(
       if (Node.isIdentifier(caller) && caller.getText() === "String") {
         if (
           (STRING_SUPPORTED_STATIC_METHODS as readonly string[]).includes(
-            methodName
+            methodName,
           )
         ) {
           detectedMethods.add(`string.${methodName}` as DetectedMethod);
